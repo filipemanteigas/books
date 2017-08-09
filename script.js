@@ -16,7 +16,9 @@ function Queue(){
 };
 
 function Library(){
-    this.books = new Queue()
+    this.index = -1 ;
+    this.books = new Queue();
+    this.bookView = new Queue();
     this.actualBook = null;
    
     this.addbook = function(book){
@@ -25,16 +27,18 @@ function Library(){
     };
      
     this.nextBook = function(){
-       this.actualBook = this.books.dequeue();
-       this.actualBook.render();
+        this.actualBook = this.books.dequeue();
+        this.actualBook.render();
+        this.bookView.enqueue(this.actualBook);
+        this.index++
     };
     this.like = function(){
-        this.actualBook.likes++;
-        this.nextBook();
+        this.bookView.data[this.index].likes++;
+       
     }
      this.dislike = function(){
-        this.actualBook.dislikes++;
-        this.nextBook();
+        this.bookView.data[this.index].dislikes++;
+       
 
         
     }
@@ -73,11 +77,36 @@ library.nextBook();
 
 
 $('#buttonlike').click(function(){
-     library.like();
+    if (library.books.data.length){
+        library.like();
+        library.nextBook();
+    }
+     
+    else {
+        library.like();
+        $('#mainPage').hide();
+        $('#endPage').show();
+        counterLikes()
+        completetag()
+       
+    }
+     
+       
  });
 
 $('#buttondislike').click(function(){
-  library.dislike();
+if (library.books.data.length){
+        library.dislike();
+        library.nextBook();
+    }
+     
+    else {
+        library.dislike();
+        $('#mainPage').hide();
+        $('#endPage').show();
+        counterLikes()
+        completetag()
+    }
 });
 
 
@@ -87,7 +116,7 @@ $('#buttondislike').click(function(){
    function counterLikes(){
     var counterlikes=0;
     var counterDislike=0;
-    $.each(library.books.data,function(index, book){
+    $.each(library.bookView.data,function(index,book){
         if(book.likes==1){
             counterlikes++;
         } else {
@@ -160,24 +189,24 @@ $lastInserted = $('.book:last-child');
 
 
 
-// function completetag() {
+ function completetag() {
 
-//     $.each(library.books,function(index,book){
+     $.each(library.bookView.data,function(index,book){
 
-//     var html =` 
-//     <tr>
-//     <td>`+ book.title + `
-//     </td>
-//     <td>`+ book.likes + `
-//     </td>
-//     <td>`+ book.dislikes + `
-//     </td>
-//     </tr>`;
+     var html =` 
+     <tr>
+     <td>`+ book.title + `
+     </td>
+     <td>`+ book.likes + `
+     </td>
+     <td>`+ book.dislikes + `
+     </td>
+     </tr>`;
 
-//     $('#tableresult tbody').append(html);
+     $('#tableresult tbody').append(html);
 
-// });
-// }        
+ });
+ }        
 
 /*
 var clicks = 0;
